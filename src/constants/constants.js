@@ -1,10 +1,10 @@
 export const API = "/api/users";
 
 export const REQUEST_METHODS = {
-  GET: "Get",
-  POST: "Post",
-  PUT: "Put",
-  DELETE: "Delete",
+  GET: "GET",
+  POST: "POST",
+  PUT: "PUT",
+  DELETE: "DELETE",
 };
 
 export const REQUEST_ERRORS = {
