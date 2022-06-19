@@ -5,6 +5,8 @@ import { createServer } from "http";
 import { API, REQUEST_METHODS, REQUEST_ERRORS } from "./constants/index";
 import { users } from "./users/index";
 
+import {validateUser} from "./utils/index"
+
 
 config({ path: resolve(cwd(), ".env") });
 
@@ -22,22 +24,62 @@ const getDataUsers = async (res) => {
   }
 };
 
+const create = async (req, res) => {
+  try {
+    const body = await getData(req);
+    const { username, age, hobbies } = JSON.parse(body);
+
+    if (username || age || hobbies) {
+
+      const arrayUser = { username, age, hobbies };
+
+      if (!validateUser(arrayUser)) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ message: REQUEST_ERRORS.INVALID }));
+      } 
+      
+      else {
+        const newUser = (user) => new Promise((resolve) => {
+          const item = { id: uuidv4(), ...user };
+          users.push(item);
+          resolve(item);
+        });
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(newUser));
+      }
+
+    } 
+    else {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: REQUEST_ERRORS.INVALID }));
+    }
+  } 
+
+  catch {
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({message: REQUEST_ERRORS.BAD_REQUEST  }));
+  }
+};
+
 const server = createServer((req, res) => {
+
   if (req.url === API) {
     switch (req.method) {
       case REQUEST_METHODS.GET: {
         getDataUsers(req, res);
       }
+      break
       case REQUEST_METHODS.POST: {
-        console.log("create");
+        create(req, res)
       }
+      break
     }
-  }
+  } 
 });
 
 const { PORT } = process.env;
 
 server.listen(PORT, () => console.log(`Listening port ${PORT}`));
-
 
 

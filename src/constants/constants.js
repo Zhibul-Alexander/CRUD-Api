@@ -12,4 +12,5 @@ export const REQUEST_ERRORS = {
   SERVER: "Server error",
   URL_NOT_EXIST: "Url not exist",
   USER_NOT_FOUND: "User not found",
+  INVALID: "Invalid data format",
 };
